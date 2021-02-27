@@ -4,17 +4,25 @@ file="images.properties"
 
 if [ -f "$file" ]
 then
-  echo "$file found."
+  echo -e "$file found, start to pull images"
 
   while IFS='=' read -r key value
   do
-    echo "Start pull ${key},"
-    docker pull ${value}
-    docker tag ${value} ${key}
-    docker rmi ${value}
-    echo "Pull ${key} successed."
+    if [[ "$(docker images -q ${key} 2> /dev/null)" == "" ]]; then
+      if [[ "$(docker images -q ${value} 2> /dev/null)" == "" ]]; then
+        docker tag ${value} ${key}
+      else
+        echo -e "Start pull ${key} \n"
+        docker pull ${value}
+        docker tag ${value} ${key}
+        docker rmi ${value}
+        echo -e "\n Pull ${key} successed."
+      fi
+    else
+      echo -e "Image exeists. \n"
+    fi
   done < "$file"
 
 else
-  echo "Do nothing as $file not found."
+  echo -e "Do nothing as $file not found. \n"
 fi
