@@ -14,12 +14,14 @@ then
         docker pull ${value}
         docker tag ${value} ${key}
         docker rmi ${value}
-        echo -e "\n Pull ${key} successed."
+        echo -e "\n Pull ${key} successfully."
       else
+        echo -e "Image ${value} exeists, just need change tag. \n"
         docker tag ${value} ${key}
+        echo -e "Tag change successfully. \n"
       fi
     else
-      echo -e "Image exeists. \n"
+      echo -e "Image ${key} exeists. \n"
     fi
   done < "$file"
 
