@@ -1,20 +1,30 @@
 #!/bin/bash
 
-key="k8s.gcr.io/kube-proxy:v1.20.4"
-value="zeusxiao/kube-proxy:v1.20.4"
+file="images_node.properties"
 
-if [[ "$(docker images -q ${key} 2> /dev/null)" == "" ]]; then
-  if [[ "$(docker images -q ${value} 2> /dev/null)" == "" ]]; then
-    echo -e "Start pull ${key} \n"
-    docker pull ${value}
-    docker tag ${value} ${key}
-    docker rmi ${value}
-    echo -e "\n Pull ${key} successfully."
-  else
-    echo -e "Image ${value} exeists, just need change tag. \n"
-    docker tag ${value} ${key}
-    echo -e "Tag change successfully. \n"
-  fi
+if [ -f "$file" ]; then
+  echo -e "Start to pull images\n"
+
+  while IFS='=' read -r key value
+  do
+    if [[ "$(docker images -q ${key} 2> /dev/null)" == "" ]]; then
+      echo -e "Start pull ${key} \n"
+      if [[ -z "${value}" ]]; then
+        docker pull ${value}
+      else
+        if [[ "$(docker images -q ${value} 2> /dev/null)" == "" ]]; then
+          docker pull ${value}
+          docker tag ${value} ${key}
+          docker rmi ${value}
+        else 
+          docker tag ${value} ${key}
+        fi
+      fi
+      echo -e "Pull ${key} successfully. \n"
+    else
+      echo -e "Image ${key} exeists. \n"
+    fi
+  done < "$file"
 else
-  echo -e "Image ${key} exeists. \n"
+  echo -e "Do nothing as $file not found. \n"
 fi
