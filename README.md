@@ -6,4 +6,5 @@ mirror of k8s images in gcr
 
 ### 使用方式
 1. clone this repository
-2. run pull_images.sh in bash
+2. master节点上执行pull_images.sh 
+3. work节点上执行pull_node_images.sh
