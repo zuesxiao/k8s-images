@@ -10,7 +10,7 @@ if [ -f "$file" ]; then
     if [[ "$(docker images -q ${key} 2> /dev/null)" == "" ]]; then
       echo -e "Start pull ${key} \n"
       if [[ -z "${value}" ]]; then
-        docker pull ${value}
+        docker pull ${key}
       else
         if [[ "$(docker images -q ${value} 2> /dev/null)" == "" ]]; then
           docker pull ${value}
